@@ -2,7 +2,7 @@
 
 namespace App\Controllers\User;
 
-use App\Auth\Auth;
+use App\Auth\User\Auth;
 use App\Controllers\Controller;
 use App\Transformers\UserTransformer;
 use League\Fractal\Resource\Item;

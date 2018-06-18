@@ -24,6 +24,15 @@ class Validator {
 		return $this->errors;
 	}
 
+	public function getError()
+	{
+		$errors = array_values($this->errors);
+
+		foreach ($errors as $key => $value) {
+			return $value;
+		}
+	}
+
 	public function failed() {
 		return !empty($this->errors);
 	}

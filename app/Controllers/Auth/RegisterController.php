@@ -12,9 +12,12 @@ class RegisterController extends Controller {
 	public function register($request, $response) {
 
 		$validation = $this->validateRegisterRequest($request);
-
+    
     if ($validation->failed()) {
-        return $response->withJson(['errors' => $validation->getErrors()], 422);
+        return $response->withJson([
+          'status' => false,
+          'errors' => $validation->getError()
+        ], 422);
     }
 
 		$user = User::create([

@@ -3,6 +3,8 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\Controller;
+use App\Transformers\UserTransformer;
+use League\Fractal\Resource\Item;
 use Respect\Validation\Validator as V;
 
 class LoginController extends Controller {
@@ -20,12 +22,14 @@ class LoginController extends Controller {
 		);
 
 		if (!$auth) {
-			return $response->withJson(['status' => false, 'message' => 'Unauthorize crendentials'])->withStatus(422);
+			return $response->withJson(['status' => false, 'message' => 'Invalid username or password'])->withStatus(422);
 		}
 
 		$auth->{'token'} = $this->auth->generateToken($auth);
+		$transform = new Item($auth, new UserTransformer());
+		$data = $this->fractal->createData($transform)->toArray();
 
-		return $response->withJson(['user' => $auth])->withStatus(200);
+		return $response->withJson(['user' => $data])->withStatus(200);
 	}
 
 	private function ValidateLoginRequest($request)

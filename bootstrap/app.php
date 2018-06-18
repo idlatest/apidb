@@ -16,7 +16,7 @@ if (file_exists(ROOT . '.env')) {
 
 // tijani.nwadei@gmail.com sendng of cv
 
-// require __DIR__ . '/pagination.php';
+require __DIR__ . '/pagination.php';
 
 $app = new \Slim\App([
 	"settings" => [
@@ -47,7 +47,7 @@ $app = new \Slim\App([
 	],
 ]);
 
-// $app->add(new \App\Middleware\Cors());
+$app->add(new \App\Middleware\Cors());
 
 $container = $app->getContainer();
 
@@ -76,9 +76,23 @@ $container['CategoryController'] = function ($container)
 	return new \App\Controllers\CategoryController($container);
 };
 
+$container['ClientController'] = function ($container) {
+	return new \App\Controllers\Client\ClientController($container);
+};
+
+$container['AirportController'] = function ($container)
+{
+	return new \App\Controllers\AirportController($container);
+};
+
 $container['auth'] = function ($container) 
 {
-	return new \App\Auth\Auth($container['settings']);
+	return new \App\Auth\User\Auth($container['settings']);
+};
+
+$container['clientAuth'] = function ($container) 
+{
+	return new \App\Auth\Client\Auth($container['settings']);
 };
 
 $container['fractal'] = function ()

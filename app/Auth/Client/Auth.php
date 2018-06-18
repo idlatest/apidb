@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Auth;
+namespace App\Auth\Client;
 
-use App\Models\User;
+use App\Models\Client;
 use DateTime;
 use Firebase\JWT\JWT;
 
@@ -10,22 +10,22 @@ class Auth {
 
 	protected $appConfig;
 
-	const IDENTIFIER = 'username';
+	const IDENTIFIER = 'id';
 
 	public function __construct($appConfig) {
 		$this->appConfig = $appConfig;
 	}
 
-	public function generateToken(User $user) {
+	public function generateToken(Client $client) {
 		$start = new DateTime();
-		$expires = new DateTime("now +2 hours");
+		$expires = new DateTime("now +1 year");
 
 		$payload = [
 			"iat" => $start->getTimeStamp(),
       "exp" => $expires->getTimeStamp(),
       "jti" => base64_encode(random_bytes(16)),
       'iss' => $this->appConfig['app']['url'],  // Issuer
-      "sub" => $user->{ self::IDENTIFIER },
+      "sub" => $client->{ self::IDENTIFIER },
 		];
 
 		$secret = $this->appConfig['jwt']['secret'];
@@ -34,24 +34,10 @@ class Auth {
     return $token;
 	}
 
-	public function attempt($username, $password) {
-		$user = User::where(self::IDENTIFIER, $username)->first();
-
-		if (!$user) {
-			return false;
-		}
-
-		if (password_verify($password, $user->password)) {
-			return $user;
-		}
-
-		return false;
-	}
-
-	public function requestUser($request)
+	public function requestClient($request)
 	{
 		if ($token = $request->getAttribute('token')) {
-			return User::where(self::IDENTIFIER, $token['sub'])->first();
+			return Client::where(self::IDENTIFIER, $token['sub'])->first();
 		}
 	}
 }
