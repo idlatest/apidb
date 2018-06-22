@@ -110,6 +110,12 @@ $container['clientAuth'] = function ($container)
 	return new \App\Auth\Client\Auth($container['settings']);
 };
 
+$container['ReviewController'] = function ($container)
+{
+	return new \App\Controllers\ReviewController($container);
+};
+
+
 $container['fractal'] = function ()
 {
 	$manager = new League\Fractal\Manager;

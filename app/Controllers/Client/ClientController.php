@@ -83,5 +83,6 @@ class ClientController extends Controller
         'name' => v::noWhitespace()->notEmpty(),
         'email' => v::noWhitespace()->notEmpty(),
       ]);
+
 	}
 }

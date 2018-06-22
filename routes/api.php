@@ -14,7 +14,13 @@ $app->group('/auth', function () {
 $app->get('/user', 'UserController:show')->add($jwtAuth);
 $app->get('/categories', 'CategoryController:index');
 
+<<<<<<< HEAD
 $app->get('/client', 'ClientController:index')->add($jwtAuth);
+=======
+//review routes
+$app->get('/reviews', 'ReviewController:store');
+
+>>>>>>> 730e38a24b55dac61284c811f90f185e045e147e
 $app->post('/client', 'ClientController:store')->add($jwtAuth);
 
 $app->post('/oauth/authorize', function ($request, $response) use ($container) {
