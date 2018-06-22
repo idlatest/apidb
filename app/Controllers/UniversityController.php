@@ -2,21 +2,22 @@
 
 namespace App\Controllers;
 
-use App\Models\Airport;
+use App\Models\University;
+use App\Transformers\UniversityTransformer;
 use App\Controllers\Controller;
-use App\Transformers\AirportTransformer;
-use App\Auth\Client\Auth;
+
 use League\Fractal\{
   Resource\Item,
   Resource\Collection,
   Pagination\IlluminatePaginatorAdapter
 };
 
-class AirportController extends Controller
+class UniversityController extends Controller
 {
 	
 	public function index($request, $response)
 	{
+	
 		$client = $this->clientAuth->requestClient($request);
 
 		if (! $client) {
@@ -26,29 +27,32 @@ class AirportController extends Controller
 			]);
 		}
 
-		$builder = Airport::query()->latest();
-		// $airports = Airport::all();
+		$builder = University::query()->latest();
 
 		$client->stat()->attach($client->id);
 
 		if ($country = $request->getParam('country')) {
-			$builder->where('countryCode', $country);
+			$builder->where('country_code', $country);
 		}
 
 		if ($city = $request->getParam('city')) {
 			$builder->where('cityCode', $city);
 		}
 
-		$airports = $builder->paginate(100);
+		if ($type = $request->getParam('type')) {
+			$builder->where('type', $type);
+		}
 
-		$transformer = (new Collection($airports->getCollection(), new AirportTransformer()))
-      ->setPaginator(new IlluminatePaginatorAdapter($airports));
+		$universities = $builder->paginate(100);
+
+		$transformer = (new Collection($universities->getCollection(), new UniversityTransformer()))
+      ->setPaginator(new IlluminatePaginatorAdapter($universities));
 
     $data = $this->fractal->createData($transformer)->toArray();
 
 		return $response->withJson([
 			'status' => true,
-			'airports' => $data,
+			'universities' => $data,
 		])->withStatus(200);
 	}
 
@@ -62,18 +66,18 @@ class AirportController extends Controller
 				'error' => 'Unidentified client!',
 			]);
 		}
-		
-		$airport = Airport::where('code', $args['code'])->first();
+
+		$university = University::find($args['id']);
 
 		$client->stat()->attach($client->id);
 
-		$transformer = new Item($airport, new AirportTransformer());
+		$transformer = (new Item($university, new UniversityTransformer()));
 
     $data = $this->fractal->createData($transformer)->toArray();
 
 		return $response->withJson([
 			'status' => true,
-			'airport' => $data,
+			'university' => $data,
 		])->withStatus(200);
 	}
 }

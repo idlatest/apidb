@@ -14,6 +14,7 @@ $app->group('/auth', function () {
 $app->get('/user', 'UserController:show')->add($jwtAuth);
 $app->get('/categories', 'CategoryController:index');
 
+$app->get('/client', 'ClientController:index')->add($jwtAuth);
 $app->post('/client', 'ClientController:store')->add($jwtAuth);
 
 $app->post('/oauth/authorize', function ($request, $response) use ($container) {
@@ -33,3 +34,21 @@ $app->group('/airports', function () {
 	$this->get('/', 'AirportController:index');
 	$this->get('/{code}', 'AirportController:show');
 })->add($jwtAuth);
+
+$app->get('/continents', function ($request, $response) use ($container) {
+	$db = $container->db;
+
+	$continents = $db->table('apidb_continents')->get();
+
+	return $response->withJson([
+		'status' => true,
+		'continents' => [
+			'data' => $continents
+		],
+	], 200);
+})->add($jwtAuth);
+
+$app->get('/countries', 'CountryController:index')->add($jwtAuth);
+
+$app->get('/universities', 'UniversityController:index')->add($jwtAuth);
+$app->get('/universities/{id}', 'UniversityController:show')->add($jwtAuth);

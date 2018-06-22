@@ -5,12 +5,37 @@ namespace App\Controllers\Client;
 use App\Models\Client;
 use App\Controllers\Controller;
 use App\Transformers\ClientTransformer;
-use League\Fractal\Resource\Item;
+use League\Fractal\Resource\{
+	Item,
+	Collection
+};
 use App\Services\KeyTokenizer;
 use Respect\Validation\Validator as V;
 
 class ClientController extends Controller
 {
+
+	public function index($request, $response)
+	{
+		$user = $this->auth->requestUser($request);
+
+		if (!$user) {
+			return $response->withJson([
+				'status' => false,
+				'errors' => 'User not found!'
+			], 422);
+		}
+
+		$clients = Client::where('user_id', $user->id)->get();
+
+		$transform = new Collection($clients, new ClientTransformer());
+		$data = $this->fractal->createData($transform)->toArray();
+
+		return $response->withJson([
+			'status' => true,
+			'clients' => $data,
+		]);
+	}
 	
 	public function store($request, $response)
 	{
@@ -20,7 +45,7 @@ class ClientController extends Controller
 			return $response->withJson([
 				'status' => false,
 				'errors' => 'User not found!'
-			]);
+			], 422);
 		}
 
 		$validation = $this->validateClientRequest($request);

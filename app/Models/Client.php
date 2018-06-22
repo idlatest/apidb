@@ -19,4 +19,9 @@ class Client extends Model
 		'policy_url',
 		'app_key',
 	];
+
+	public function stat()
+	{
+		return $this->belongsToMany(Client::class, 'apidb_request_statistics')->withTimestamps();
+	}
 }

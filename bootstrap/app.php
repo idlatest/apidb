@@ -21,6 +21,7 @@ require __DIR__ . '/pagination.php';
 $app = new \Slim\App([
 	"settings" => [
 		"displayErrorDetails" => getenv('APP_DEBUG'),
+		"determineRouteBeforeAppMiddleware" => true,
 		'app' => [
 			'name' => getenv('APP_NAME'),
 			'url' => getenv('APP_URL'),
@@ -56,6 +57,10 @@ $capsule->addConnection($container['settings']['db']);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
+$container['db'] = function ($container) use ($capsule) {
+	return $capsule;
+};
+
 $container['RegisterController'] = function ($container) 
 {
 	return new \App\Controllers\Auth\RegisterController($container);
@@ -83,6 +88,16 @@ $container['ClientController'] = function ($container) {
 $container['AirportController'] = function ($container)
 {
 	return new \App\Controllers\AirportController($container);
+};
+
+$container['CountryController'] = function ($container)
+{
+	return new \App\Controllers\CountryController($container);
+};
+
+$container['UniversityController'] = function ($container) 
+{
+	return new \App\Controllers\UniversityController($container);
 };
 
 $container['auth'] = function ($container) 
